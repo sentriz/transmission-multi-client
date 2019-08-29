@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-size: 14px;
+        font-family: monospace;
+      }
+      body {
+        overflow-y: scroll;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 12px;
+      }
+      .server-table {
+        margin: 12px 0;
+        padding: 12px 0 12px 12px;
+        border-left: 1px solid black;
+        border-bottom: 1px solid black;
+        width: 100%;
+      }
+      .server-table .row-desc .row-text {
+        font-weight: bold;
+      }
+      textarea {
+        resize: vertical;
+      }
+      input {
+        box-sizing: border-box;
+      }
+      input[type="text"],
+      textarea {
+        width: 100%;
+        border-style: solid;
+        border-width: 2px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+      button {
+        margin-left: auto;
+        display: block;
+        border-radius: 0;
+        padding: 0 12px;
+        border-style: solid;
+      }
+    </style>
+    <script type="module">
+      import { h, app } from "https://unpkg.com/hyperapp";
+      const newServer = name => ({
+        name,
+        username: "",
+        password: "",
+        rpc: "",
+        folders: ""
+      });
+      const Create = state => ({
+        ...state,
+        servers: state.servers.concat(newServer(""))
+      });
+      const Update = (state, change) => ({
+        ...state,
+        // prettier-ignore
+        servers: state.servers.map((server, i) =>
+          i === change.i
+            ? { ...server, [change.k]: change.v }
+            : server
+        )
+      });
+      const Delete = (state, index) => ({
+        ...state,
+        servers: state.servers.filter((_, i) => i != index)
+      });
+      const exampleRPCUrl = `http://my.domain/transmission/rpc`;
+      const exampleDLFolders = `\
+/downloads/film
+/downloads/series
+/downloads/music`;
+      const SField = (i, k, v, placeholder) =>
+        h("input", {
+          type: "text",
+          value: v,
+          placeholder,
+          oninput: [Update, e => ({ i, k, v: e.target.value })]
+        });
+      const SText = (i, k, v, placeholder) =>
+        h("textarea", {
+          rows: 3,
+          placeholder,
+          oninput: [Update, e => ({ i, k, v: e.target.value })]
+        });
+      const SColumn = (k, sk, v) => {
+        const items = [h("p", { class: "row-text" }, k)];
+        if (sk) items.push(h("p", { class: "row-sub-text" }, sk));
+        return h("tr", {}, [
+          h("td", { class: "row-desc" }, items),
+          h("td", {}, v)
+        ]);
+      };
+      const Server = (i, server) =>
+        h("div", {}, [
+          // prettier-ignore
+          h("table", { class: "server-table" }, [
+            SColumn("server alias", "", SField(i, "name", server.name)),
+            SColumn("username", "", SField(i, "username", server.username)),
+            SColumn("password", "", SField(i, "password", server.password)),
+            SColumn("rpc url", "", SField(i, "rpc", server.rpc, exampleRPCUrl)),
+            SColumn("download folders", "(one per line)", SText(i, "folders", server.folders, exampleDLFolders)),
+            SColumn("", "", h("button", { onClick: [Delete, i] }, "delete server"))
+          ])
+        ]);
+      const ServerList = servers =>
+        servers.map((server, i) => Server(i, server));
+      app({
+        init: { servers: [newServer("default"), newServer("")] },
+        node: document.getElementById("app"),
+        view: state =>
+          h("div", { class: "container" }, [
+            h("h4", {}, "transmission multi client"),
+            ...ServerList(state.servers),
+            h("button", { onClick: Create }, "new server")
+          ])
+      });
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
