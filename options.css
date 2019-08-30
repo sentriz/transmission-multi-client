@@ -1,0 +1,71 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  font-family: monospace;
+}
+
+button {
+  border-radius: 0;
+  padding: 0 12px;
+  border-style: solid;
+}
+
+.container {
+  max-width: 600px;
+  padding: 0 12px;
+  margin: 0 auto;
+}
+
+.container > * {
+  margin: 12px 0;
+}
+
+.server {
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  padding: 0 0 12px 12px;
+}
+
+.server table {
+  margin: 12px 0;
+  width: 100%;
+}
+
+.server table tr > td:last-of-type {
+  text-align: right;
+}
+
+.server table .row-desc .row-text {
+  font-weight: bold;
+}
+
+input,
+textarea {
+  width: 100%;
+  border-style: solid;
+  border-width: 2px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 36px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.button-row > button {
+  margin-left: 5px;
+}
+
+.save-controls {
+  padding: 12px 0 0 12px;
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+}
