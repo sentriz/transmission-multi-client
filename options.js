@@ -1,4 +1,5 @@
 import { app, h } from "./hyperapp201.js";
+import { createMenus } from "./background.js";
 
 //
 // begin helpers
@@ -25,11 +26,17 @@ const StorageR = props => [
   },
   props
 ];
-
 const StorageW = props => [
   async (dispatch, { action = s => s, key, data }) => {
     await browser.storage.sync.set({ [key]: data });
     dispatch(action);
+  },
+  props
+];
+const CallFunc = props => [
+  async (dispatch, { action = s => s, func, data }) => {
+    dispatch(action);
+    func(...data);
   },
   props
 ];
@@ -45,7 +52,8 @@ const ServStorageR = state => [
 ];
 const ServStorageW = state => [
   { ...state, canSave: false },
-  StorageW({ key: "servers", data: state.servers })
+  StorageW({ key: "servers", data: state.servers }),
+  CallFunc({ func: createMenus, data: [] })
 ];
 const ServCreate = state => ({
   ...state,
@@ -62,7 +70,7 @@ const ServUpdate = (state, change) => ({
 const ServDelete = (state, index) => ({
   ...state,
   canSave: true,
-  servers: state.servers.filter((_, i) => i != index)
+  servers: state.servers.filter((_, i) => i !== index)
 });
 
 //

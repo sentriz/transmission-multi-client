@@ -2,20 +2,14 @@
   "author": "sentriz",
   "description": "add torrents to multiple transmission servers",
   "manifest_version": 2,
-  "name": "transmission mutli client",
+  "name": "transmission multi client",
   "version": "0.0.1",
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["borderify.js"]
-    }
-  ],
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
   },
-  "permissions": ["contextMenus", "notifications", "storage"],
+  "permissions": ["<all_urls>", "contextMenus", "notifications", "storage"],
   "browser_specific_settings": {
     "gecko": {
       "id": "transmission@senan.xyz"
@@ -25,5 +19,18 @@
     "gecko": {
       "id": "transmission@senan.xyz"
     }
+  },
+  "background": {
+    "page": "background.html"
+  },
+  "icons": {
+    "16": "icons/logo-16.png",
+    "24": "icons/logo-24.png",
+    "32": "icons/logo-32.png",
+    "48": "icons/logo-48.png",
+    "64": "icons/logo-64.png",
+    "128": "icons/logo-128.png",
+    "256": "icons/logo-256.png",
+    "512": "icons/logo-512.png"
   }
 }
