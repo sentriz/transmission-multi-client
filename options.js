@@ -18,17 +18,18 @@ const newServ = name => ({
 
 //
 // begin generic effect constructors
-// TODO: replace then syntax
 const StorageR = props => [
-  (dispatch, { action = s => s, key }) => {
-    browser.storage.sync.get(key).then(data => dispatch(action, data[key]));
+  async (dispatch, { action = s => s, key }) => {
+    const data = await browser.storage.sync.get(key);
+    dispatch(action, data[key]);
   },
   props
 ];
 
 const StorageW = props => [
-  (dispatch, { action = s => s, key, data }) => {
-    browser.storage.sync.set({ [key]: data }).then(() => dispatch(action));
+  async (dispatch, { action = s => s, key, data }) => {
+    await browser.storage.sync.set({ [key]: data });
+    dispatch(action);
   },
   props
 ];
