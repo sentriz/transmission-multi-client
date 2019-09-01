@@ -40,7 +40,7 @@ const ServStorageR = state => [
   state,
   StorageR({
     key: "servers",
-    action: (state, servers) => ({ ...state, servers })
+    action: (state, servers) => ({ ...state, servers: servers || [] })
   })
 ];
 const ServStorageW = state => [
@@ -117,7 +117,6 @@ const App = state =>
       h("button", { onClick: ServStorageW, disabled: !state.canSave }, "save"),
       h("button", { onClick: ServStorageR }, "cancel")
     ])
-    // h("pre", {}, JSON.stringify(state, null, 2))
   ]);
 
 //
