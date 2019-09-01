@@ -20,14 +20,14 @@ const newServ = name => ({
 // begin generic effect constructors
 // TODO: replace then syntax
 const StorageR = props => [
-  (dispatch, { action, key }) => {
+  (dispatch, { action = s => s, key }) => {
     browser.storage.sync.get(key).then(data => dispatch(action, data[key]));
   },
   props
 ];
 
 const StorageW = props => [
-  (dispatch, { action, key, data }) => {
+  (dispatch, { action = s => s, key, data }) => {
     browser.storage.sync.set({ [key]: data }).then(() => dispatch(action));
   },
   props
@@ -116,6 +116,7 @@ const App = state =>
       h("button", { onClick: ServStorageW, disabled: !state.canSave }, "save"),
       h("button", { onClick: ServStorageR }, "cancel")
     ])
+    // h("pre", {}, JSON.stringify(state, null, 2))
   ]);
 
 //
