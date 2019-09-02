@@ -66,15 +66,12 @@ const downloadTorrent = async (server, url, directory) => {
 //
 // begin context menu
 // exported function (called from options) is created then called
-const createMenu = (title, callback) => {
+const createMenu = (title, callback, props) => {
   browser.contextMenus.create({
+    ...props,
     title: title,
     contexts: ["link"],
-    onclick: callback,
-    icons: {
-      "16": "icons/logo-16.png",
-      "32": "icons/logo-32.png"
-    }
+    onclick: callback
   });
 };
 export const createMenus = async () => {
@@ -94,9 +91,13 @@ export const createMenus = async () => {
         downloadTorrent(server, info.linkUrl, folder);
       });
     }
-    createMenu(`${serverName}: default`, (info, tab) => {
+    createMenu(`${serverName}: default folder`, (info, tab) => {
       downloadTorrent(server, info.linkUrl, null);
     });
+    if (servers.length < 2) {
+      continue;
+    }
+    createMenu(null, null, { type: "separator" });
   }
 };
 createMenus();
