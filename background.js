@@ -25,7 +25,7 @@ const downloadTorrent = async (server, url, directory) => {
     Authorization: `Basic ${passFromServer(server)}`,
   };
   const sessResp = await fetch(server.rpc, {
-    method: "head",
+    method: "get",
     headers: authHeaders,
   });
   if (sessResp.status !== 409) {
