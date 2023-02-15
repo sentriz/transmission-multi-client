@@ -7,70 +7,70 @@ const exampleRPCUrl = `http://my.domain/transmission/rpc`;
 const exampleDLFolders = [
   "/downloads/film",
   "/downloads/series",
-  "/downloads/music"
+  "/downloads/music",
 ].join("\n");
-const newServ = name => ({
+const newServ = (name) => ({
   name,
   username: "",
   password: "",
   rpc: "",
-  folders: ""
+  folders: "",
 });
 
 //
 // begin generic effect constructors
-const StorageR = props => [
-  async (dispatch, { action = s => s, key }) => {
+const StorageR = (props) => [
+  async (dispatch, { action = (s) => s, key }) => {
     const data = await browser.storage.sync.get(key);
     dispatch(action, data[key]);
   },
-  props
+  props,
 ];
-const StorageW = props => [
-  async (dispatch, { action = s => s, key, data }) => {
+const StorageW = (props) => [
+  async (dispatch, { action = (s) => s, key, data }) => {
     await browser.storage.sync.set({ [key]: data });
     dispatch(action);
   },
-  props
+  props,
 ];
-const CallFunc = props => [
-  async (dispatch, { action = s => s, func, data }) => {
+const CallFunc = (props) => [
+  async (dispatch, { action = (s) => s, func, data }) => {
     dispatch(action);
     func(...data);
   },
-  props
+  props,
 ];
 
 //
 // begin actions
-const ServStorageR = state => [
+const ServStorageR = (state) => [
   state,
   StorageR({
     key: "servers",
-    action: (state, servers) => ({ ...state, servers: servers || [] })
-  })
+    action: (state, servers) => ({ ...state, servers: servers || [] }),
+  }),
 ];
-const ServStorageW = state => [
+const ServStorageW = (state) => [
   { ...state, canSave: false },
   StorageW({ key: "servers", data: state.servers }),
-  CallFunc({ func: createMenus, data: [] })
+  CallFunc({ func: createMenus, data: [] }),
 ];
-const ServCreate = state => ({
+const ServCreate = (state) => ({
   ...state,
   canSave: true,
-  servers: state.servers.concat(newServ(""))
+  servers: state.servers.concat(newServ("")),
 });
 const ServUpdate = (state, change) => ({
   ...state,
   canSave: true,
   servers: state.servers.map((server, i) =>
     i === change.i ? { ...server, [change.k]: change.v } : server
-  )
+  ),
 });
 const ServDelete = (state, index) => ({
   ...state,
   canSave: true,
-  servers: state.servers.filter((_, i) => i !== index)
+  servers: state.servers.filter((_, i) => i !== index),
 });
 
 //
@@ -79,7 +79,7 @@ const SField = (type, i, k, v, exprop) =>
   h(type, {
     ...exprop,
     value: v,
-    oninput: [ServUpdate, e => ({ i, k, v: e.target.value })]
+    oninput: [ServUpdate, (e) => ({ i, k, v: e.target.value })],
   });
 const SText = (i, k, v, exprop) =>
   SField("input", i, k, v, { ...exprop, type: "text" });
@@ -110,21 +110,21 @@ const Serv = (i, server) =>
         STextArea(i, "folders", server.folders, { placeholder: exampleDLFolders })),
     ]),
     h("div", { class: "button-row" }, [
-      h("button", { onClick: [ServDelete, i] }, "delete server")
-    ])
+      h("button", { onClick: [ServDelete, i] }, "delete server"),
+    ]),
   ]);
-const ServList = servers => servers.map((server, i) => Serv(i, server));
-const App = state =>
+const ServList = (servers) => servers.map((server, i) => Serv(i, server));
+const App = (state) =>
   h("div", { class: "container" }, [
     h("h4", {}, "transmission multi client"),
     ...ServList(state.servers),
     h("div", { class: "button-row" }, [
-      h("button", { onClick: ServCreate }, "new server")
+      h("button", { onClick: ServCreate }, "new server"),
     ]),
     h("div", { class: "button-row save-controls" }, [
       h("button", { onClick: ServStorageW, disabled: !state.canSave }, "save"),
-      h("button", { onClick: ServStorageR }, "cancel")
-    ])
+      h("button", { onClick: ServStorageR }, "cancel"),
+    ]),
   ]);
 
 //
@@ -132,5 +132,5 @@ const App = state =>
 app({
   init: ServStorageR({ canSave: false, servers: [] }),
   view: App,
-  node: document.getElementById("app")
+  node: document.getElementById("app"),
 });

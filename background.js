@@ -1,5 +1,6 @@
 // begin utils
-const passFromServer = server => btoa(server.username + ":" + server.password);
+const passFromServer = (server) =>
+  btoa(server.username + ":" + server.password);
 
 //
 // begin notifications
@@ -8,24 +9,24 @@ const notify = (message, icon) => {
     type: "basic",
     title: "transmission multi client",
     message: message,
-    iconUrl: icon
+    iconUrl: icon,
   });
   setTimeout(() => {
     browser.notifications.clear("torrentAdded");
   }, 6000);
 };
-const notifyGood = message => notify(message, "icons/checkmark.png");
-const notifyBad = message => notify(message, "icons/xmark.png");
+const notifyGood = (message) => notify(message, "icons/checkmark.png");
+const notifyBad = (message) => notify(message, "icons/xmark.png");
 
 //
 // begin transmission logic
 const downloadTorrent = async (server, url, directory) => {
   const authHeaders = {
-    Authorization: `Basic ${passFromServer(server)}`
+    Authorization: `Basic ${passFromServer(server)}`,
   };
   const sessResp = await fetch(server.rpc, {
     method: "head",
-    headers: authHeaders
+    headers: authHeaders,
   });
   if (sessResp.status !== 409) {
     notifyBad(`error getting session: ${sessResp.statusText}`);
@@ -41,15 +42,15 @@ const downloadTorrent = async (server, url, directory) => {
     headers: {
       ...authHeaders,
       "Content-Type": "json",
-      "x-transmission-session-id": sessionID
+      "x-transmission-session-id": sessionID,
     },
     body: JSON.stringify({
       method: "torrent-add",
       arguments: {
         filename: url,
-        ...(directory ? { "download-dir": directory } : {})
-      }
-    })
+        ...(directory ? { "download-dir": directory } : {}),
+      },
+    }),
   });
   if (postResp.status !== 200) {
     notifyBad(`error adding torrent: ${postResp.statusText}`);
@@ -71,7 +72,7 @@ const createMenu = (title, callback, props) => {
     ...props,
     title: title,
     contexts: ["link"],
-    onclick: callback
+    onclick: callback,
   });
 };
 export const createMenus = async () => {
